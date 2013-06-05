@@ -1,4 +1,4 @@
-package com.mera.sqml
+package com.mera.sqms
 
 import static org.junit.Assert.*
 import org.junit.*
