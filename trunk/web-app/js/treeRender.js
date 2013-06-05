@@ -3,7 +3,7 @@ function buildTree(treeData) {
 	var treeView = new YAHOO.widget.TreeView("navigationTree", treeData);
 	treeView.draw();
 	    
-    var currentTextNode = null;   
+    var currentTextNode = null;
 
     function addNode() {
         var newLabel = window.prompt("Enter a label for the new node: ", ""),
@@ -51,6 +51,10 @@ function buildTree(treeData) {
             this.cancel();
         }
     }
+    
+    treeView.subscribe("labelClick", function(node) { 
+    	alert(node); 
+	});
 
     var contextMenu = new YAHOO.widget.ContextMenu(
         "treeContextMenu",
@@ -65,5 +69,6 @@ function buildTree(treeData) {
         }
     );
     
-    contextMenu.subscribe("triggerContextMenu", onTriggerContextMenu);    
+    contextMenu.subscribe("triggerContextMenu", onTriggerContextMenu);
+    
 }
