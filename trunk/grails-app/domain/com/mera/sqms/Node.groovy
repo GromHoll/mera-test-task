@@ -23,4 +23,8 @@ class Node {
 	Set<Node> getChildren() {
 		return new HashSet<Node>();
 	}
+	
+	boolean isLeaf() {
+		return false;
+	}
 }

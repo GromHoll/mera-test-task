@@ -2,23 +2,7 @@ package com.mera.sqms
 
 class TreeGeneratorService {
 
-    String getTreeAsJson() {
-		def json = new groovy.json.JsonBuilder()
-		return getTree(json)
-    }
-	
-	private String getTree(Object builder) {				
-		List listOfMap = generateTree()		
-		builder.call(listOfMap)		
-		
-		def out = new StringWriter()
-		out << builder
-		println out.toString()
-		
-		return out.toString()
-	}
-	
-	private List generateTree() {
+    public List getTree() {
 		List listOfMap = []
 		for(OrganizationNode orgNode : OrganizationNode.list()) {
 			listOfMap.add(generateNode(orgNode))
@@ -28,9 +12,8 @@ class TreeGeneratorService {
 	
 	private Map generateNode(Node node) {
 		Map map = [:]
-		map.type = "text"
-		map.id = node.id
-		map.label = node.getName()
+		map.text = node.getName()
+		map.leaf = node.isLeaf()
 		map.expanded = true
 		
 		List l = []
