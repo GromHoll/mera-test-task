@@ -17,4 +17,9 @@ class EmployeeNode extends Node {
 		"${firstName} ${lastName}"
 	}
 	
+	@Override
+	boolean isLeaf() {
+		return true;
+	}
+	
 }
