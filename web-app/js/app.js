@@ -56,13 +56,15 @@ function showTree(jsonTree) {
 
 }
 
+var nodeInfo;
+
 function loadInfo(id) {
 	
 	Ext.Ajax.request({
 		url: 'mainView/getInfo/' + id,
 		method: 'GET',
 		success: function (result, request) {
-			var nodeInfo = Ext.decode(result.responseText);
+			nodeInfo = Ext.decode(result.responseText);
 			showInfo(nodeInfo);
 		},
 		failure: function () {
@@ -74,9 +76,44 @@ function loadInfo(id) {
 function showInfo(info) {
 	var cmp = Ext.getCmp('main-panel');
 	cmp.removeAll();
+	showOrganization(cmp, info);
+	
+	if(info.type == 'org') {
+		showOrganization(cmp, info);
+	} else if(info.type == 'uni') {
+		showUnit(cmp, info);
+	} else if(info.type == 'pro') {
+		showUnit(cmp, info);
+	} else if(info.type == 'emp') {
+		showProject(cmp, info);
+	} else {
+		Ext.Msg.alert('FAIL type = ' + info.type);
+	}
+		
+	cmp.doLayout();	
+}
+
+function showOrganization(cmp, info) {
 	cmp.add({
 	    title: info.title
 	});
-	cmp.doLayout();	
+}
+
+function showUnit(cmp, info) {
+	cmp.add({
+	    title: info.title
+	});
+}
+
+function showProject(cmp, info) {
+	cmp.add({
+	    title: info.title
+	});
+}
+
+function showEmployee(cmp, info) {
+	cmp.add({
+	    title: info.title
+	});
 }
 
