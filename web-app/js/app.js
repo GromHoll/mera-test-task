@@ -12,8 +12,8 @@ Ext.Ajax.request({
 
 function showTree(jsonTree) {
 
-	Ext.onReady(function() {			
-		var myBorderPanel = new Ext.Panel({
+	Ext.onReady(function() {
+		var borderPanel = new Ext.Panel({
 		    renderTo: document.body,
 		    width: 700,
 		    height: 500,
@@ -39,17 +39,44 @@ function showTree(jsonTree) {
 		        id: 'treePanel',
 		        listeners: {
 		            click: function(n) {
-		                Ext.Msg.alert('Navigation Tree Click', 'You clicked: "' + n.attributes.text + '"');
+		            	loadInfo(n.attributes.id);
 		            }
 		        }
-		    },{
+		    }, {
 		        title: 'Center Region',
+		        id: 'main-panel',
 		        region: 'center',
 		        xtype: 'container',
 		        layout: 'fit',
-		        margins: '5 5 0 0'
+		        margins: '5 5 5 0',
+		        unstyled: true
 		    }]
 		});
 	});
 
 }
+
+function loadInfo(id) {
+	
+	Ext.Ajax.request({
+		url: 'mainView/getInfo/' + id,
+		method: 'GET',
+		success: function (result, request) {
+			var nodeInfo = Ext.decode(result.responseText);
+			showInfo(nodeInfo);
+		},
+		failure: function () {
+			Ext.Msg.alert('FAIL');
+		}
+	});	
+}
+
+function showInfo(info) {
+	var cmp = Ext.getCmp('main-panel');
+	cmp.removeAll();
+	cmp.add({
+	    title: info.title
+	});
+	cmp.doLayout();	
+}
+
