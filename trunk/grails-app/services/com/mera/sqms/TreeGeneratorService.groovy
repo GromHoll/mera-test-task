@@ -13,6 +13,7 @@ class TreeGeneratorService {
 	private Map generateNode(Node node) {
 		Map map = [:]
 		map.text = node.getName()
+		map.id = node.id
 		map.leaf = node.isLeaf()
 		map.expanded = true
 		
