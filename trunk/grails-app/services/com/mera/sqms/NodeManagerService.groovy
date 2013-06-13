@@ -63,5 +63,11 @@ class NodeManagerService {
 				
 		return map
 	}
-	
+
+	def deleteNode(long id) {
+		Node node = Node.findById(id)
+		if(node && !node.getClass().equals(OrganizationNode.class)) {
+			node.delete()			
+		}
+	}
 }

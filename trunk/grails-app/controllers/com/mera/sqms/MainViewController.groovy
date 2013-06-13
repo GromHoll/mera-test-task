@@ -17,4 +17,9 @@ class MainViewController {
 		render nodeInfo as JSON
 	}
 	
+	def deleteNode(long id) {
+		nodeManagerService.deleteNode(id)
+		render "success"
+	}
+	
 }
