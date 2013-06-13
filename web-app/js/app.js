@@ -1,21 +1,24 @@
-/* ===== INIT METHODS ===== */
+/***** INIT *****/
 
-Ext.Ajax.request({
-	url: 'mainView/index',
-	method: 'GET',
-	success: function (result, request) {
-		var jsonTree = Ext.decode(result.responseText);
-		showTree(jsonTree);
-	},
-	failure: function () {
-		Ext.Msg.alert('FAIL');
-	}
-});
+loadTreeRequest();
 
-function showTree(jsonTree) {
+function loadTreeRequest() {
+	Ext.Ajax.request({
+		url: 'mainView/index',
+		method: 'GET',
+		success: function (result, request) {
+			var jsonTree = Ext.decode(result.responseText);
+			initGUI(jsonTree);
+		},
+		failure: function () {
+			Ext.Msg.alert('FAIL');
+		}
+	});
+}
 
-	Ext.onReady(function() {
-		var borderPanel = new Ext.Panel({
+function initGUI(jsonTree) {
+	Ext.onReady(function() {	
+		new Ext.Panel({
 		    renderTo: document.body,
 		    width: 700,
 		    height: 500,
@@ -24,6 +27,7 @@ function showTree(jsonTree) {
 		    items: [{
 		        xtype: 'treepanel',
 		        title: 'Tree',
+		        id: 'treePanel',
 		        region:'west',
 		        margins: '5 5 5 5',
 		        split: true,
@@ -33,12 +37,11 @@ function showTree(jsonTree) {
 		        autoScroll: true,
 		        collapsible: true,
 		        useArrows: true,
+		        rootVisible: false,
 		        root: new Ext.tree.AsyncTreeNode({
 		            expanded: true,
 		            children: jsonTree
 		        }),
-		        rootVisible: false,
-		        id: 'treePanel',
 		        contextMenu: new Ext.menu.Menu({
 		            items: [{
 		                id: 'create-node',
@@ -54,27 +57,13 @@ function showTree(jsonTree) {
 		                itemclick: function(item) {
 		                    switch (item.id) {
 	                        	case 'create-node':
-
+	                    			// TODO create node
 	                        		break;
 	                        	case 'edit-node':
-		                            var n = item.parentMenu.contextNode;
-	                        		Ext.Ajax.request({
-	        		            		url: 'mainView/getInfo/' + n.id,
-	        		            		method: 'GET',
-	        		            		success: function (result, request) {
-	        		            			var nodeInfo = Ext.decode(result.responseText);
-	        		            			editNode(nodeInfo);
-	        		            		},
-	        		            		failure: function () {
-	        		            			Ext.Msg.alert('Loading node\'s info failed');
-	        		            		}
-	        		            	});
+		                            // TODO edit node
 	                        		break;
 		                        case 'delete-node':
-		                            var n = item.parentMenu.contextNode;
-		                            if (n.parentNode) {
-		                            	deleteNode(n);
-		                            }
+	                            	deleteNode(item.parentMenu.contextNode);
 		                            break;
 		                    }
 		                }
@@ -82,40 +71,12 @@ function showTree(jsonTree) {
 		        }),
 		        listeners: {
 		            click: function(n) {
-		            	Ext.Ajax.request({
-		            		url: 'mainView/getInfo/' + n.attributes.id,
-		            		method: 'GET',
-		            		success: function (result, request) {
-		            			var nodeInfo = Ext.decode(result.responseText);
-		            			showInfo(nodeInfo);
-		            		},
-		            		failure: function () {
-		            			Ext.Msg.alert('Loading node\'s info failed');
-		            		}
-		            	});
+		            	showNodeRequest(n.attributes.id);
 		            },
 		            contextmenu: function(node, e) {
-			                node.select();
-			                var c = node.getOwnerTree().contextMenu;
-			                c.contextNode = node;
-			                
-			                var deleteItem = c.getComponent('delete-node');
-			                if(node.getDepth() == 1) {
-			                	deleteItem.disable();
-			                } else {
-			                	deleteItem.enable();
-			                }
-			                
-			                var createItem = c.getComponent('create-node');
-			                if(node.getDepth() == 4) {
-			                	createItem.disable();
-			                } else {
-			                	createItem.enable();
-			                }
-			                
-			                c.showAt(e.getXY());
-			            }
-		        }
+		            	contextMenuRender(node, e);
+		            }
+	        	}
 		    }, {
 		        title: 'Center Region',
 		        id: 'main-panel',
@@ -126,80 +87,125 @@ function showTree(jsonTree) {
 	            defaults:{bodyStyle:'padding:10px'}, 
 		    }]
 		});
-	});
-
+	});	
 }
 
-/* ===== SHOW METHODS ===== */
+function contextMenuRender(node, e) {
+    node.select();
+    var c = node.getOwnerTree().contextMenu;
+    c.contextNode = node;
+    
+    var deleteItem = c.getComponent('delete-node');
+    var createItem = c.getComponent('create-node');		                
+    switch(node.getDepth()) {
+    	case 1:
+    		deleteItem.disable();
+    		createItem.enable();
+    		break;
+    	case 4:
+    		createItem.disable();
+        	deleteItem.enable();
+    		break;		                
+    	default:
+    		deleteItem.enable();
+			createItem.enable();		                
+    }
+    
+    c.showAt(e.getXY());
+}
 
+/***** SHOW *****/
+
+function showNodeRequest(id) {
+	Ext.Ajax.request({
+		url: 'mainView/getInfo/' + id,
+		method: 'GET',
+		success: function (result, request) {
+			var nodeInfo = Ext.decode(result.responseText);
+			showInfo(nodeInfo);
+		},
+		failure: function () {
+			Ext.Msg.alert('Loading node\'s info failed');
+		}
+	});
+}
 
 function showInfo(info) {
-	var cmp = Ext.getCmp('main-panel');
-	cmp.removeAll();
+	var main = Ext.getCmp('main-panel');
+	main.removeAll();
 	
-	switch(info.type) {
-		case 'org':
-			showOrganization(cmp, info);
-			break;
-		case 'uni':
-			showUnit(cmp, info);
-			break;
-		case 'pro':
-			showProject(cmp, info);
-			break;
-		case 'emp':
-			showEmployee(cmp, info);
-			break;			
-	}
+	var cmp = getComponent(info, true);
+	main.add(cmp);
 		
-	cmp.doLayout();	
+	main.doLayout();	
 }
 
-function showOrganization(cmp, info) {
-	cmp.add({
+function getComponent(info, disabled) {
+	var cmp;
+	switch(info.type) {
+		case 'org':
+			cmp = getOrganizationCmp(info, disabled);
+			break;
+		case 'uni':
+			cmp = getUnitCmp(info, disabled);
+			break;
+		case 'pro':
+			cmp = getProjectCmp(info, disabled);
+			break;
+		case 'emp':
+			cmp = getEmployeeCmp(info, disabled);
+			break;			
+	}
+	return cmp;
+}
+
+function getOrganizationCmp(info, isDisabled) {
+	var cmp = new Ext.Panel({
 	    title: info.title,
 	    layout: 'form',
         labelAlign: 'top',
         defaultType: 'textfield',
-        defaults: {disabled: true},
+        defaults: {disabled: isDisabled},
 	    items: [{
 	    	fieldLabel: 'Organization name',
             value: info.name
 	    }]
 	});
+	return cmp;
 }
 
-function showUnit(cmp, info) {
-	cmp.add({
+function getUnitCmp(info, disabled) {
+	var cmp = new Ext.Panel({
 		title: info.title,
 	    layout: 'form',
         labelAlign: 'top',
         defaultType: 'textfield',
-        defaults: {disabled: true},
+        defaults: {disabled: disabled},
 	    items: [{
 	    	fieldLabel: 'Unit name',
             value: info.name
 	    }]
 	});
+	return cmp;
 }
 
-function showProject(cmp, info) {
-	cmp.add({
+function getProjectCmp(info, disabled) {
+	var cmp = new Ext.Panel({
 		title: info.title,
 		layout: 'form',
         labelAlign: 'top',
         defaultType: 'textfield',
-        defaults: {disabled: true},
+        defaults: {disabled: disabled},
 	    items: [{
 	    	fieldLabel: 'Project name',
             value: info.name
 	    }]
 	});
+	return cmp;
 }
 
-function showEmployee(cmp, info) {
-	cmp.add({
-    	xtype: 'tabpanel',
+function getEmployeeCmp(info, disabled) {
+	var cmp = new Ext.TabPanel({
 	    title: info.title,
 	    activeTab: 0,
 	    items: [{
@@ -207,7 +213,7 @@ function showEmployee(cmp, info) {
 	    	layout: 'form',
 	        labelAlign: 'top',
 	        defaultType: 'textfield',
-	        defaults: {disabled: true},
+	        defaults: {disabled: disabled},
 		    items: [{
 		    	fieldLabel: 'First name',
 	            value: info.firstName
@@ -216,8 +222,8 @@ function showEmployee(cmp, info) {
 	            value: info.lastName
 		    }]
 	    }, {
+    		// TODO Contacts
 	    	title: 'Contacts',
-		    layout: 'vbox', 
 	    	items: [{
 		    	xtype: 'label',
 		        text: 'Project name: ' + info.name,
@@ -225,45 +231,26 @@ function showEmployee(cmp, info) {
 	    	}]     
 	    }]
 	});
+	return cmp;
 }
 
-/* ===== DELETE METHODS ===== */
+/***** DELETE *****/
 
 function deleteNode(node) {
-	Ext.Ajax.request({
-		url: 'mainView/deleteNode/' + node.id,
-		method: 'GET',
-		success: function (result, request) {
-			node.remove();
-		},
-		failure: function () {
-			Ext.Msg.alert('Cannot delete node');
-		}
-	});
+	if (node.parentNode) {
+		Ext.Ajax.request({
+			url: 'mainView/deleteNode/' + node.id,
+			method: 'GET',
+			success: function (result, request) {
+				node.remove();
+			},
+			failure: function () {
+				Ext.Msg.alert('Cannot delete node');
+			}
+		});
+    }
 }
 
-/* ===== EDIT METHODS ===== */
+/***** EDIT *****/
 
-function editNode(info) {
-	switch(info.type) {
-		case 'org':
-			showOrganization(cmp, info);
-			break;
-		case 'uni':
-			showUnit(cmp, info);
-			break;
-		case 'pro':
-			showProject(cmp, info);
-			break;
-		case 'emp':
-			showEmployee(cmp, info);
-			break;			
-	}
-}
-
-function editOrganization() {
-	
-}
-
-
-/* ===== CREATE METHODS ===== */
+/***** CREATE *****/
