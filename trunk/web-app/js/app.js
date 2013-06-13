@@ -60,7 +60,7 @@ function initGUI(jsonTree) {
 	                    			// TODO create node
 	                        		break;
 	                        	case 'edit-node':
-		                            // TODO edit node
+	                        		editNodeRequest(item.parentMenu.contextNode.id);
 	                        		break;
 		                        case 'delete-node':
 	                            	deleteNode(item.parentMenu.contextNode);
@@ -78,13 +78,20 @@ function initGUI(jsonTree) {
 		            }
 	        	}
 		    }, {
-		        title: 'Center Region',
 		        id: 'main-panel',
 		        region: 'center',
 		        xtype: 'container',
-		        layout: 'fit',
 		        margins: '5 5 5 0',
-	            defaults:{bodyStyle:'padding:10px'}, 
+	            items: [{
+			        id: 'main-view',
+			        xtype: 'container',
+			        //layout: 'fit',
+		            defaults: {bodyStyle:'padding:10px'}
+	            }, {
+			        id: 'main-buttons',
+			        xtype: 'container',
+			        //layout: 'fit'
+	            }]
 		    }]
 		});
 	});	
@@ -131,8 +138,10 @@ function showNodeRequest(id) {
 }
 
 function showInfo(info) {
-	var main = Ext.getCmp('main-panel');
+	var main = Ext.getCmp('main-view');
+	var buttons = Ext.getCmp('main-buttons');
 	main.removeAll();
+	buttons.removeAll();
 	
 	var cmp = getComponent(info, true);
 	main.add(cmp);
@@ -159,17 +168,34 @@ function getComponent(info, disabled) {
 	return cmp;
 }
 
-function getOrganizationCmp(info, isDisabled) {
+function getOrganizationCmp(info, disabled) {
 	var cmp = new Ext.Panel({
 	    title: info.title,
 	    layout: 'form',
         labelAlign: 'top',
         defaultType: 'textfield',
-        defaults: {disabled: isDisabled},
+        defaults: {disabled: disabled},
 	    items: [{
 	    	fieldLabel: 'Organization name',
             value: info.name
-	    }]
+	    }],
+        buttons: [{
+            text: 'Save',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("save");
+	            }
+        	}
+        }, {
+            text: 'Cancel',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("cancel");
+	            }
+        	}
+        }]
 	});
 	return cmp;
 }
@@ -184,7 +210,24 @@ function getUnitCmp(info, disabled) {
 	    items: [{
 	    	fieldLabel: 'Unit name',
             value: info.name
-	    }]
+	    }],
+        buttons: [{
+            text: 'Save',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("save");
+	            }
+        	}
+        }, {
+            text: 'Cancel',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("cancel");
+	            }
+        	}
+        }]
 	});
 	return cmp;
 }
@@ -199,7 +242,24 @@ function getProjectCmp(info, disabled) {
 	    items: [{
 	    	fieldLabel: 'Project name',
             value: info.name
-	    }]
+	    }],
+        buttons: [{
+            text: 'Save',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("save");
+	            }
+        	}
+        }, {
+            text: 'Cancel',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("cancel");
+	            }
+        	}
+        }]
 	});
 	return cmp;
 }
@@ -229,7 +289,24 @@ function getEmployeeCmp(info, disabled) {
 		        text: 'Project name: ' + info.name,
 		        margins: '5 5 5 5'
 	    	}]     
-	    }]
+	    }],
+        buttons: [{
+            text: 'Save',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("save");
+	            }
+        	}
+        }, {
+            text: 'Cancel',
+            hidden: disabled,
+            listeners: {
+	            click: function(n) {
+	            	alert("cancel");
+	            }
+        	}
+        }]
 	});
 	return cmp;
 }
@@ -253,4 +330,32 @@ function deleteNode(node) {
 
 /***** EDIT *****/
 
+function editNodeRequest(id) {
+	Ext.Ajax.request({
+		url: 'mainView/getInfo/' + id,
+		method: 'GET',
+		success: function (result, request) {
+			var nodeInfo = Ext.decode(result.responseText);
+			editInfo(nodeInfo);
+		},
+		failure: function () {
+			Ext.Msg.alert('Loading node\'s info failed');
+		}
+	});	
+}
+
+function editInfo(info) {
+	var main = Ext.getCmp('main-view');
+	var buttons = Ext.getCmp('main-buttons');
+	main.removeAll();
+	buttons.removeAll();
+	
+	var cmp = getComponent(info, false);
+	main.add(cmp);
+		
+	main.doLayout();
+	buttons.doLayout();
+}
+
 /***** CREATE *****/
+
