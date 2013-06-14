@@ -1,22 +1,8 @@
 /***** INIT *****/
 
-loadTreeRequest();
+initGUI();
 
-function loadTreeRequest() {
-	Ext.Ajax.request({
-		url: 'mainView/index',
-		method: 'GET',
-		success: function (result, request) {
-			var jsonTree = Ext.decode(result.responseText);
-			initGUI(jsonTree);
-		},
-		failure: function () {
-			Ext.Msg.alert('FAIL');
-		}
-	});
-}
-
-function initGUI(jsonTree) {
+function initGUI() {
 	Ext.onReady(function() {	
 		new Ext.Panel({
 		    renderTo: document.body,
@@ -39,8 +25,7 @@ function initGUI(jsonTree) {
 		        useArrows: true,
 		        rootVisible: false,
 		        root: new Ext.tree.AsyncTreeNode({
-		            expanded: true,
-		            children: jsonTree
+		            expanded: true
 		        }),
 		        contextMenu: new Ext.menu.Menu({
 		            items: [{
@@ -57,7 +42,7 @@ function initGUI(jsonTree) {
 		                itemclick: function(item) {
 		                    switch (item.id) {
 	                        	case 'create-node':
-	                    			// TODO create node
+	                    			createNode(item.parentMenu.contextNode);
 	                        		break;
 	                        	case 'edit-node':
 	                        		editNodeRequest(item.parentMenu.contextNode.id);
@@ -85,16 +70,38 @@ function initGUI(jsonTree) {
 	            items: [{
 			        id: 'main-view',
 			        xtype: 'container',
-			        //layout: 'fit',
 		            defaults: {bodyStyle:'padding:10px'}
 	            }, {
 			        id: 'main-buttons',
 			        xtype: 'container',
-			        //layout: 'fit'
 	            }]
 		    }]
 		});
-	});	
+	});
+	
+	loadTreeRequest();
+}
+
+function loadTreeRequest() {
+	Ext.Ajax.request({
+		url: 'mainView/index',
+		method: 'GET',
+		success: function (result, request) {
+			var jsonTree = Ext.decode(result.responseText);
+			updateTree(jsonTree);		
+		},
+		failure: function () {
+			Ext.Msg.alert('tree loading is failed');
+		}
+	});
+}
+
+function updateTree(jsonTree) {
+	var treePanel = Ext.getCmp('treePanel');
+	treePanel.setRootNode(new Ext.tree.AsyncTreeNode({
+	    expanded: true,
+		children: jsonTree
+	}));
 }
 
 function contextMenuRender(node, e) {
@@ -163,7 +170,7 @@ function getComponent(info, disabled) {
 			break;
 		case 'emp':
 			cmp = getEmployeeCmp(info, disabled);
-			break;			
+			break;
 	}
 	return cmp;
 }
@@ -176,15 +183,18 @@ function getOrganizationCmp(info, disabled) {
         defaultType: 'textfield',
         defaults: {disabled: disabled},
 	    items: [{
+	    	id: 'org-name',
+            allowBlank: false,
 	    	fieldLabel: 'Organization name',
             value: info.name
 	    }],
         buttons: [{
             text: 'Save',
             hidden: disabled,
+            nodeId: info.id,
             listeners: {
 	            click: function(n) {
-	            	alert("save");
+	            	save( {type: 'org', id: n.nodeId} );
 	            }
         	}
         }, {
@@ -192,7 +202,7 @@ function getOrganizationCmp(info, disabled) {
             hidden: disabled,
             listeners: {
 	            click: function(n) {
-	            	alert("cancel");
+	            	cancelEdit();
 	            }
         	}
         }]
@@ -208,15 +218,19 @@ function getUnitCmp(info, disabled) {
         defaultType: 'textfield',
         defaults: {disabled: disabled},
 	    items: [{
+	    	id: 'uni-name',
+            allowBlank: false,
 	    	fieldLabel: 'Unit name',
             value: info.name
 	    }],
         buttons: [{
             text: 'Save',
             hidden: disabled,
+            nodeId: info.id,
+            parentId: info.parentId,
             listeners: {
 	            click: function(n) {
-	            	alert("save");
+	            	save( {type: 'uni', id: n.nodeId, "organization.id": n.parentId} );
 	            }
         	}
         }, {
@@ -224,7 +238,7 @@ function getUnitCmp(info, disabled) {
             hidden: disabled,
             listeners: {
 	            click: function(n) {
-	            	alert("cancel");
+	            	cancelEdit();
 	            }
         	}
         }]
@@ -240,15 +254,19 @@ function getProjectCmp(info, disabled) {
         defaultType: 'textfield',
         defaults: {disabled: disabled},
 	    items: [{
+	    	id: 'pro-name',
+            allowBlank: false,
 	    	fieldLabel: 'Project name',
             value: info.name
 	    }],
         buttons: [{
             text: 'Save',
             hidden: disabled,
+            nodeId: info.id,
+            parentId: info.parentId,
             listeners: {
 	            click: function(n) {
-	            	alert("save");
+	            	save( {type: 'pro', id: n.nodeId, "unit.id": n.parentId} );
 	            }
         	}
         }, {
@@ -256,7 +274,7 @@ function getProjectCmp(info, disabled) {
             hidden: disabled,
             listeners: {
 	            click: function(n) {
-	            	alert("cancel");
+	            	cancelEdit();
 	            }
         	}
         }]
@@ -275,9 +293,13 @@ function getEmployeeCmp(info, disabled) {
 	        defaultType: 'textfield',
 	        defaults: {disabled: disabled},
 		    items: [{
+		    	id: 'emp-firstname',
+	            allowBlank: false,
 		    	fieldLabel: 'First name',
 	            value: info.firstName
 		    }, {
+		    	id: 'emp-lastname',
+	            allowBlank: false,
 		    	fieldLabel: 'Last name',
 	            value: info.lastName
 		    }]
@@ -293,9 +315,11 @@ function getEmployeeCmp(info, disabled) {
         buttons: [{
             text: 'Save',
             hidden: disabled,
+            nodeId: info.id,
+            parentId: info.parentId,
             listeners: {
 	            click: function(n) {
-	            	alert("save");
+	            	save( {type: 'emp', "project.id": n.parentId} );
 	            }
         	}
         }, {
@@ -303,7 +327,7 @@ function getEmployeeCmp(info, disabled) {
             hidden: disabled,
             listeners: {
 	            click: function(n) {
-	            	alert("cancel");
+	            	cancelEdit();
 	            }
         	}
         }]
@@ -357,5 +381,121 @@ function editInfo(info) {
 	buttons.doLayout();
 }
 
+function cancelEdit() {
+	var main = Ext.getCmp('main-view');
+	var buttons = Ext.getCmp('main-buttons');
+	main.removeAll();
+	buttons.removeAll();	
+}
+
 /***** CREATE *****/
+
+function createNode(parentNode) {
+	var data;
+	switch(parentNode.getDepth()) {
+		case 1:
+			data = {title: 'NEW UNIT', type: 'uni', parentId: parentNode.id};
+			break;
+		case 2:
+			data = {title: 'NEW PROJECT', type: 'pro', parentId: parentNode.id};
+			break;
+		case 3:
+			data = {title: 'NEW ENPLOYEE', type: 'emp', parentId: parentNode.id};
+			break;
+	}
+
+	editInfo(data, false);	
+}
+
+/***** SAVE *****/
+
+function save(data) {
+	var flag = false;
+	switch(data['type']) {
+		case 'org':
+			flag = saveOrganizationNode(data);
+			break;
+		case 'uni':
+			flag = saveUnitNode(data);
+			break;
+		case 'pro':
+			flag = saveProjectNode(data);
+			break;
+		case 'emp':
+			flag = saveEmployeeNode(data);
+			break;
+	}	
+	
+	if(flag) {
+		saveNodeRequest(data);
+	} else {
+		Ext.Msg.alert('Invalid data');
+	}
+}
+
+function saveOrganizationNode(data) {
+	var cmp = Ext.getCmp('org-name');
+	if(cmp.validate()) {
+		data['orgName'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	return true;
+}
+
+function saveUnitNode(data) {
+	var cmp = Ext.getCmp('uni-name');
+	if(cmp.validate()) {
+		data['unitName'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	return true;
+}
+
+function saveProjectNode(data) {
+	var cmp = Ext.getCmp('pro-name');
+	if(cmp.validate()) {
+		data['projectName'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	return true;	
+}
+
+function saveEmployeeNode(data) {
+	var cmp = Ext.getCmp('emp-firstname');
+	if(cmp.validate()) {
+		data['firstName'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	cmp = Ext.getCmp('emp-lastname');
+	if(cmp.validate()) {
+		data['lastName'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	return true;	
+}
+
+function saveNodeRequest(data) {
+	Ext.Ajax.request({
+		url: 'mainView/saveNode',
+		method: 'GET',
+		params: data,
+		success: function (result, request) {
+			loadTreeRequest();
+			cancelEdit();
+		},
+		failure: function () {
+			Ext.Msg.alert('Saving node was failed');
+		}
+	});	
+}
 
