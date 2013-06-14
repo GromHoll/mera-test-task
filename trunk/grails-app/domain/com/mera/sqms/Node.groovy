@@ -25,6 +25,6 @@ class Node {
 	}
 	
 	boolean isLeaf() {
-		return false;
+		return !getChildren();
 	}
 }

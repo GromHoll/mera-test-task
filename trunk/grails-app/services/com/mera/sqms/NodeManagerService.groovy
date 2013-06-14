@@ -1,5 +1,7 @@
 package com.mera.sqms
 
+import org.springframework.web.context.request.RequestContextHolder;
+
 class NodeManagerService {
 
     def getInfo(long id) {
@@ -69,5 +71,34 @@ class NodeManagerService {
 		if(node && !node.getClass().equals(OrganizationNode.class)) {
 			node.delete()			
 		}
+	}
+
+	boolean saveNode(Map data) {
+		if(data.id) {
+			Node node = Node.findById(data.id)
+			node.properties = data
+			if(node.validate()) {
+				node.save()
+			} else {
+				return false
+			}
+		} else {
+			Node node
+			if(data?.type == 'uni') {
+				node = new UnitNode(data)				
+			} else if(data?.type == 'pro') {
+				node = new ProjectNode(data)	
+			} else if(data?.type == 'emp') {
+				node = new EmployeeNode(data)	
+			}
+			if(node.validate()) {
+				node.save()
+			} else {
+				println node.errors
+				return false
+			}
+		}
+		
+		return true
 	}
 }
