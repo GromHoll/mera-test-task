@@ -187,6 +187,22 @@ function getOrganizationCmp(info, disabled) {
             allowBlank: false,
 	    	fieldLabel: 'Organization name',
             value: info.name
+	    }, {
+	    	id: 'org-industry',
+	    	fieldLabel: 'Industry',
+            value: info.industry
+	    }, {
+	    	id: 'org-yearOfCreating',
+	    	xtype: 'numberfield',
+	    	minValue: 1900,
+	    	maxValue: 2100,
+	    	fieldLabel: 'Year of creating',
+            value: info.yearOfCreating
+	    }, {
+	    	id: 'org-site',
+	    	fieldLabel: 'Site',
+            value: info.site,
+            vtype:'url'
 	    }],
         buttons: [{
             text: 'Save',
@@ -222,6 +238,10 @@ function getUnitCmp(info, disabled) {
             allowBlank: false,
 	    	fieldLabel: 'Unit name',
             value: info.name
+	    }, {
+	    	id: 'uni-direction',
+	    	fieldLabel: 'Direction',
+            value: info.direction
 	    }],
         buttons: [{
             text: 'Save',
@@ -258,6 +278,19 @@ function getProjectCmp(info, disabled) {
             allowBlank: false,
 	    	fieldLabel: 'Project name',
             value: info.name
+	    }, {
+	    	id: 'pro-customer',
+	    	fieldLabel: 'Customer',
+            value: info.customer
+	    }, {
+	    	id: 'pro-technologies',
+	    	fieldLabel: 'Technologies',
+            value: info.technologies
+	    }, {
+	    	id: 'pro-site',
+	    	fieldLabel: 'Site',
+            value: info.site,
+            vtype:'url'
 	    }],
         buttons: [{
             text: 'Save',
@@ -304,13 +337,44 @@ function getEmployeeCmp(info, disabled) {
 	            value: info.lastName
 		    }]
 	    }, {
-    		// TODO Contacts
-	    	title: 'Contacts',
+	    	title: 'Address',
+	    	layout: 'form',
+	        labelAlign: 'top',
+	        defaultType: 'textfield',
+	        defaults: {disabled: disabled},
 	    	items: [{
-		    	xtype: 'label',
-		        text: 'Project name: ' + info.name,
-		        margins: '5 5 5 5'
-	    	}]     
+		    	id: 'emp-city',
+		    	fieldLabel: 'City',
+	            value: info.city
+		    }, {
+		    	id: 'emp-street',
+		    	fieldLabel: 'Street',
+	            value: info.street
+		    }, {
+		    	id: 'emp-home',
+		    	fieldLabel: 'Home',
+	            value: info.home
+		    }, {
+		    	id: 'emp-apartment',
+		    	fieldLabel: 'Apartment',
+	            value: info.apartment
+		    }]     
+	    }, {
+	    	title: 'Contacts',
+	    	layout: 'form',
+	        labelAlign: 'top',
+	        defaultType: 'textfield',
+	        defaults: {disabled: disabled},
+	    	items: [{
+		    	id: 'emp-email',
+		    	fieldLabel: 'Email',
+	            value: info.email,
+	            vtype:'email'
+		    }, {
+		    	id: 'emp-phone',
+		    	fieldLabel: 'Phone',
+	            value: info.phone
+		    }]
 	    }],
         buttons: [{
             text: 'Save',
@@ -319,7 +383,7 @@ function getEmployeeCmp(info, disabled) {
             parentId: info.parentId,
             listeners: {
 	            click: function(n) {
-	            	save( {type: 'emp', "project.id": n.parentId} );
+	            	save( {type: 'emp', id: n.nodeId, "project.id": n.parentId} );
 	            }
         	}
         }, {
@@ -436,10 +500,27 @@ function save(data) {
 function saveOrganizationNode(data) {
 	var cmp = Ext.getCmp('org-name');
 	if(cmp.validate()) {
-		data['orgName'] = cmp.getValue();	
+		data['orgName'] = cmp.getValue();
 	} else {
 		return false;
 	}
+	
+	cmp = Ext.getCmp('org-yearOfCreating');
+	if(cmp.validate()) {
+		data['yearOfCreating'] = cmp.getValue();
+	} else {
+		return false;
+	}
+	
+	cmp = Ext.getCmp('org-site');
+	if(cmp.validate()) {
+		data['site'] = cmp.getValue();
+	} else {
+		return false;
+	}
+	
+	cmp = Ext.getCmp('org-industry');
+	data['industry'] = cmp.getValue();
 	
 	return true;
 }
@@ -452,6 +533,9 @@ function saveUnitNode(data) {
 		return false;
 	}
 	
+	cmp = Ext.getCmp('uni-direction');
+	data['direction'] = cmp.getValue();
+	
 	return true;
 }
 
@@ -463,6 +547,19 @@ function saveProjectNode(data) {
 		return false;
 	}
 	
+	cmp = Ext.getCmp('pro-site');
+	if(cmp.validate()) {
+		data['site'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	cmp = Ext.getCmp('pro-technologies');
+	data['technologies'] = cmp.getValue();
+		
+	cmp = Ext.getCmp('pro-customer');
+	data['customer'] = cmp.getValue();
+
 	return true;	
 }
 
@@ -481,7 +578,29 @@ function saveEmployeeNode(data) {
 		return false;
 	}
 	
-	return true;	
+	cmp = Ext.getCmp('emp-email');
+	if(cmp.validate()) {
+		data['email'] = cmp.getValue();	
+	} else {
+		return false;
+	}
+	
+	cmp = Ext.getCmp('emp-city');
+	data['city'] = cmp.getValue();
+		
+	cmp = Ext.getCmp('emp-street');
+	data['street'] = cmp.getValue();
+	
+	cmp = Ext.getCmp('emp-home');
+	data['home'] = cmp.getValue();
+	
+	cmp = Ext.getCmp('emp-apartment');
+	data['apartment'] = cmp.getValue();
+	
+	cmp = Ext.getCmp('emp-phone');
+	data['phone'] = cmp.getValue();
+	
+	return true;
 }
 
 function saveNodeRequest(data) {

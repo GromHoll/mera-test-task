@@ -10,6 +10,14 @@
 	<g:textField name="unitName" maxlength="32" required="" value="${unitNodeInstance?.unitName}"/>
 </div>
 
+<div class="fieldcontain ${hasErrors(bean: unitNodeInstance, field: 'direction', 'error')} ">
+	<label for="direction">
+		<g:message code="unitNode.direction.label" default="Direction" />
+		
+	</label>
+	<g:textField name="direction" value="${unitNodeInstance?.direction}"/>
+</div>
+
 <div class="fieldcontain ${hasErrors(bean: unitNodeInstance, field: 'organization', 'error')} required">
 	<label for="organization">
 		<g:message code="unitNode.organization.label" default="Organization" />

@@ -32,6 +32,33 @@
 				</li>
 				</g:if>
 			
+				<g:if test="${organizationNodeInstance?.yearOfCreating}">
+				<li class="fieldcontain">
+					<span id="yearOfCreating-label" class="property-label"><g:message code="organizationNode.yearOfCreating.label" default="Year Of Creating" /></span>
+					
+						<span class="property-value" aria-labelledby="yearOfCreating-label"><g:fieldValue bean="${organizationNodeInstance}" field="yearOfCreating"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${organizationNodeInstance?.industry}">
+				<li class="fieldcontain">
+					<span id="industry-label" class="property-label"><g:message code="organizationNode.industry.label" default="Industry" /></span>
+					
+						<span class="property-value" aria-labelledby="industry-label"><g:fieldValue bean="${organizationNodeInstance}" field="industry"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${organizationNodeInstance?.site}">
+				<li class="fieldcontain">
+					<span id="site-label" class="property-label"><g:message code="organizationNode.site.label" default="Site" /></span>
+					
+						<span class="property-value" aria-labelledby="site-label"><g:fieldValue bean="${organizationNodeInstance}" field="site"/></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${organizationNodeInstance?.units}">
 				<li class="fieldcontain">
 					<span id="units-label" class="property-label"><g:message code="organizationNode.units.label" default="Units" /></span>

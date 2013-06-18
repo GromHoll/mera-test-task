@@ -32,6 +32,33 @@
 				</li>
 				</g:if>
 			
+				<g:if test="${projectNodeInstance?.site}">
+				<li class="fieldcontain">
+					<span id="site-label" class="property-label"><g:message code="projectNode.site.label" default="Site" /></span>
+					
+						<span class="property-value" aria-labelledby="site-label"><g:fieldValue bean="${projectNodeInstance}" field="site"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${projectNodeInstance?.technologies}">
+				<li class="fieldcontain">
+					<span id="technologies-label" class="property-label"><g:message code="projectNode.technologies.label" default="Technologies" /></span>
+					
+						<span class="property-value" aria-labelledby="technologies-label"><g:fieldValue bean="${projectNodeInstance}" field="technologies"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${projectNodeInstance?.customer}">
+				<li class="fieldcontain">
+					<span id="customer-label" class="property-label"><g:message code="projectNode.customer.label" default="Customer" /></span>
+					
+						<span class="property-value" aria-labelledby="customer-label"><g:fieldValue bean="${projectNodeInstance}" field="customer"/></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${projectNodeInstance?.employees}">
 				<li class="fieldcontain">
 					<span id="employees-label" class="property-label"><g:message code="projectNode.employees.label" default="Employees" /></span>

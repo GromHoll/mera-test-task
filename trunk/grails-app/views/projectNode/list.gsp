@@ -26,6 +26,12 @@
 					
 						<g:sortableColumn property="projectName" title="${message(code: 'projectNode.projectName.label', default: 'Project Name')}" />
 					
+						<g:sortableColumn property="site" title="${message(code: 'projectNode.site.label', default: 'Site')}" />
+					
+						<g:sortableColumn property="technologies" title="${message(code: 'projectNode.technologies.label', default: 'Technologies')}" />
+					
+						<g:sortableColumn property="customer" title="${message(code: 'projectNode.customer.label', default: 'Customer')}" />
+					
 						<th><g:message code="projectNode.unit.label" default="Unit" /></th>
 					
 					</tr>
@@ -35,6 +41,12 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td><g:link action="show" id="${projectNodeInstance.id}">${fieldValue(bean: projectNodeInstance, field: "projectName")}</g:link></td>
+					
+						<td>${fieldValue(bean: projectNodeInstance, field: "site")}</td>
+					
+						<td>${fieldValue(bean: projectNodeInstance, field: "technologies")}</td>
+					
+						<td>${fieldValue(bean: projectNodeInstance, field: "customer")}</td>
 					
 						<td>${fieldValue(bean: projectNodeInstance, field: "unit")}</td>
 					
