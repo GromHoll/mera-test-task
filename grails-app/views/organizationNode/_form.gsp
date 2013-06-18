@@ -10,6 +10,30 @@
 	<g:textField name="orgName" maxlength="32" required="" value="${organizationNodeInstance?.orgName}"/>
 </div>
 
+<div class="fieldcontain ${hasErrors(bean: organizationNodeInstance, field: 'yearOfCreating', 'error')} ">
+	<label for="yearOfCreating">
+		<g:message code="organizationNode.yearOfCreating.label" default="Year Of Creating" />
+		
+	</label>
+	<g:select name="yearOfCreating" from="${1900..2100}" class="range" value="${fieldValue(bean: organizationNodeInstance, field: 'yearOfCreating')}" noSelection="['': '']"/>
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: organizationNodeInstance, field: 'industry', 'error')} ">
+	<label for="industry">
+		<g:message code="organizationNode.industry.label" default="Industry" />
+		
+	</label>
+	<g:textField name="industry" value="${organizationNodeInstance?.industry}"/>
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: organizationNodeInstance, field: 'site', 'error')} ">
+	<label for="site">
+		<g:message code="organizationNode.site.label" default="Site" />
+		
+	</label>
+	<g:field type="url" name="site" value="${organizationNodeInstance?.site}"/>
+</div>
+
 <div class="fieldcontain ${hasErrors(bean: organizationNodeInstance, field: 'units', 'error')} ">
 	<label for="units">
 		<g:message code="organizationNode.units.label" default="Units" />

@@ -26,6 +26,12 @@
 					
 						<g:sortableColumn property="orgName" title="${message(code: 'organizationNode.orgName.label', default: 'Org Name')}" />
 					
+						<g:sortableColumn property="yearOfCreating" title="${message(code: 'organizationNode.yearOfCreating.label', default: 'Year Of Creating')}" />
+					
+						<g:sortableColumn property="industry" title="${message(code: 'organizationNode.industry.label', default: 'Industry')}" />
+					
+						<g:sortableColumn property="site" title="${message(code: 'organizationNode.site.label', default: 'Site')}" />
+					
 					</tr>
 				</thead>
 				<tbody>
@@ -33,6 +39,12 @@
 					<tr class="${(i % 2) == 0 ? 'even' : 'odd'}">
 					
 						<td><g:link action="show" id="${organizationNodeInstance.id}">${fieldValue(bean: organizationNodeInstance, field: "orgName")}</g:link></td>
+					
+						<td>${fieldValue(bean: organizationNodeInstance, field: "yearOfCreating")}</td>
+					
+						<td>${fieldValue(bean: organizationNodeInstance, field: "industry")}</td>
+					
+						<td>${fieldValue(bean: organizationNodeInstance, field: "site")}</td>
 					
 					</tr>
 				</g:each>

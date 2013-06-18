@@ -41,6 +41,60 @@
 				</li>
 				</g:if>
 			
+				<g:if test="${employeeNodeInstance?.city}">
+				<li class="fieldcontain">
+					<span id="city-label" class="property-label"><g:message code="employeeNode.city.label" default="City" /></span>
+					
+						<span class="property-value" aria-labelledby="city-label"><g:fieldValue bean="${employeeNodeInstance}" field="city"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${employeeNodeInstance?.street}">
+				<li class="fieldcontain">
+					<span id="street-label" class="property-label"><g:message code="employeeNode.street.label" default="Street" /></span>
+					
+						<span class="property-value" aria-labelledby="street-label"><g:fieldValue bean="${employeeNodeInstance}" field="street"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${employeeNodeInstance?.home}">
+				<li class="fieldcontain">
+					<span id="home-label" class="property-label"><g:message code="employeeNode.home.label" default="Home" /></span>
+					
+						<span class="property-value" aria-labelledby="home-label"><g:fieldValue bean="${employeeNodeInstance}" field="home"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${employeeNodeInstance?.apartment}">
+				<li class="fieldcontain">
+					<span id="apartment-label" class="property-label"><g:message code="employeeNode.apartment.label" default="Apartment" /></span>
+					
+						<span class="property-value" aria-labelledby="apartment-label"><g:fieldValue bean="${employeeNodeInstance}" field="apartment"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${employeeNodeInstance?.phone}">
+				<li class="fieldcontain">
+					<span id="phone-label" class="property-label"><g:message code="employeeNode.phone.label" default="Phone" /></span>
+					
+						<span class="property-value" aria-labelledby="phone-label"><g:fieldValue bean="${employeeNodeInstance}" field="phone"/></span>
+					
+				</li>
+				</g:if>
+			
+				<g:if test="${employeeNodeInstance?.email}">
+				<li class="fieldcontain">
+					<span id="email-label" class="property-label"><g:message code="employeeNode.email.label" default="Email" /></span>
+					
+						<span class="property-value" aria-labelledby="email-label"><g:fieldValue bean="${employeeNodeInstance}" field="email"/></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${employeeNodeInstance?.project}">
 				<li class="fieldcontain">
 					<span id="project-label" class="property-label"><g:message code="employeeNode.project.label" default="Project" /></span>

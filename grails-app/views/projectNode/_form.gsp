@@ -10,6 +10,30 @@
 	<g:textField name="projectName" maxlength="32" required="" value="${projectNodeInstance?.projectName}"/>
 </div>
 
+<div class="fieldcontain ${hasErrors(bean: projectNodeInstance, field: 'site', 'error')} ">
+	<label for="site">
+		<g:message code="projectNode.site.label" default="Site" />
+		
+	</label>
+	<g:field type="url" name="site" value="${projectNodeInstance?.site}"/>
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: projectNodeInstance, field: 'technologies', 'error')} ">
+	<label for="technologies">
+		<g:message code="projectNode.technologies.label" default="Technologies" />
+		
+	</label>
+	<g:textField name="technologies" value="${projectNodeInstance?.technologies}"/>
+</div>
+
+<div class="fieldcontain ${hasErrors(bean: projectNodeInstance, field: 'customer', 'error')} ">
+	<label for="customer">
+		<g:message code="projectNode.customer.label" default="Customer" />
+		
+	</label>
+	<g:textField name="customer" value="${projectNodeInstance?.customer}"/>
+</div>
+
 <div class="fieldcontain ${hasErrors(bean: projectNodeInstance, field: 'employees', 'error')} ">
 	<label for="employees">
 		<g:message code="projectNode.employees.label" default="Employees" />

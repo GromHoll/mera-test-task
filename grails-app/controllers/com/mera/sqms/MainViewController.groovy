@@ -23,7 +23,12 @@ class MainViewController {
 	}
 	
 	def saveNode() {
-		params.remove('id')
+		println params.keySet()
+		println params.values()
+		
+		if(params?.id?.isEmpty()) {
+			params.remove('id')
+		}
 		if(nodeManagerService.saveNode(params)) {
 			render "success"
 		}

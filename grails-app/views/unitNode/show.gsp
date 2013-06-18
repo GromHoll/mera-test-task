@@ -32,6 +32,15 @@
 				</li>
 				</g:if>
 			
+				<g:if test="${unitNodeInstance?.direction}">
+				<li class="fieldcontain">
+					<span id="direction-label" class="property-label"><g:message code="unitNode.direction.label" default="Direction" /></span>
+					
+						<span class="property-value" aria-labelledby="direction-label"><g:fieldValue bean="${unitNodeInstance}" field="direction"/></span>
+					
+				</li>
+				</g:if>
+			
 				<g:if test="${unitNodeInstance?.organization}">
 				<li class="fieldcontain">
 					<span id="organization-label" class="property-label"><g:message code="unitNode.organization.label" default="Organization" /></span>
