@@ -23,7 +23,7 @@ class DbTreeTests {
 
     @Test
     void testDbTree() {
-        def organization = new OrganizationNode(orgName: "Organization 1").save();
+        def organization = new OrganizationNode(orgName: "Organization 1").save()
         def unit = new UnitNode(unitName: "Unit 1")
         def project = new ProjectNode(projectName: "Project 1")
         def employee1 = new EmployeeNode(firstName: "Finn", lastName: "The Human")
